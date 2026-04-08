@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 function may_color() {
 	# 1. Check for CI/CD environments (usually no colors or limited)
 	if [[ -n "${CI:-}" || -n "${CONTINUOUS_INTEGRATION:-}" ]]; then
@@ -38,16 +40,16 @@ function may_color() {
 	
 	# Terminal types
 	case "$term" in
-		# Modern and color-capable terminals
-		*xterm*|*screen*|*tmux*|*rxvt*|*konsole*|*gnome*|*putty*|*cygwin*|*msys*|*mintty*)
-			return 0
-			;;
-		# 256-color terminals
-		*xterm-256color*|*screen-256color*|*tmux-256color*|*alacritty*|*kitty*)
-			return 0
-			;;
-		# Color variants
-		*color*|*256*|*direct*|*truecolor*)
+        # 256-color terminals (check first to avoid pattern override)
+        *xterm-256color*|*screen-256color*|*tmux-256color*|*alacritty*|*kitty*)
+            return 0
+            ;;
+        # Modern and color-capable terminals
+        *xterm*|*screen*|*tmux*|*rxvt*|*konsole*|*gnome*|*putty*|*cygwin*|*msys*|*mintty*)
+            return 0
+            ;;
+        # Color variants
+        *direct*|*truecolor*)
 			return 0
 			;;
 		# Dumb terminals (no color support)
@@ -69,13 +71,12 @@ function red()    { printf "%s" "$(text_red "$@")";    }
 function green()  { printf "%s" "$(text_green "$@")";  }
 function blue()   { printf "%s" "$(text_blue "$@")";   }
 
-
-
 function echoc() {
-	local color=$(echo "$1"|tr '[:upper:]' '[:lower:]')
+	local color
+        color=$(echo "$1"|tr '[:upper:]' '[:lower:]')
 	local title=$2
 	shift 2
-	local message=$@
+	local message="$*"
 	# If QUIET/silent mode is enabled, suppress non-error output
 	if [[ "${QUIET:-}" == "true" || "${QUIET:-}" == "1" ]]; then
 		# Only allow printing errors (red/danger)
@@ -83,8 +84,9 @@ function echoc() {
 			return 0
 		fi
 	fi
+	
 	{
-		if $(may_color); then
+		if may_color; then
 			case "$color" in
 			red|danger)
 				printf "%s %s" "$(text_danger "$(fw_bold "$title")")" "$message"
@@ -109,7 +111,7 @@ function echoc() {
 	} >&2
 }
 
-function is_quiet() { [[ "${QUIET:-}" == "true" || "${QUIET:-}" == "1" ]] }
+function is_quiet() { [[ "${QUIET:-}" == "true" || "${QUIET:-}" == "1" ]]; }
 
 function info()    { is_quiet || printf "%s %s\n" "$(text_info "$(fw_bold "[INFO]")")" "$*" >&2;   	    }
 function debug()   { is_quiet || printf "%s %s\n" "$(text_secondary "$(fw_bold "[DEBUG]")")" "$*" >&2;  }
@@ -217,7 +219,7 @@ function confirm_action() {
 
 function split_title() {
 	local max_length="80"
-	local text="$@"
+	        local text="$*"
 
 	while [[ ${#text} -gt $max_length ]]; do
 		# Cut the text at maximum allowed length
@@ -232,7 +234,7 @@ function split_title() {
 # DEPRECATED: Use title() instead for better Bootstrap-style formatting
 # This function is kept for backward compatibility but will be removed in future versions
 function printtitle() {
-	local title="$@"
+	local title="$*"
 	printf "\n" >&2
 	printf "%s\n" "$(text_primary "********************************************")" >&2
 	printf "%s\n" "$(text_primary "*** $(fw_bold "$title") ***")" >&2
@@ -284,7 +286,6 @@ function ensure_dependencies() {
 	ensure_commands "$@"
 }
 
-
 # Function to calculate yesterday's date in DDMMYYYY format (macOS and Linux compatible)
 function get_yesterday_ddmmyyyy() {
   if [[ "$(uname)" == "Darwin" ]]; then
@@ -298,7 +299,7 @@ function get_yesterday_ddmmyyyy() {
 function get_days_ago_iso8601() {
   local days="${1:-7}"
   if [[ "$(uname)" == "Darwin" ]]; then
-    date -v-${days}d -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v-${days}d +"%Y-%m-%d" 2>/dev/null || echo ""
+    date -v-"${days}"d -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v-"${days}"d +"%Y-%m-%d" 2>/dev/null || echo ""
   else
     date -d "${days} days ago" -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -d "${days} days ago" -u +"%Y-%m-%d" 2>/dev/null || echo ""
   fi
@@ -308,7 +309,7 @@ function get_days_ago_iso8601() {
 function get_days_ahead_iso8601() {
   local days="${1:-1}"
   if [[ "$(uname)" == "Darwin" ]]; then
-    date -v+${days}d -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v+${days}d +"%Y-%m-%d" 2>/dev/null || echo ""
+    date -v+"${days}"d -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v+"${days}"d +"%Y-%m-%d" 2>/dev/null || echo ""
   else
     date -d "${days} days" -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -d "${days} days" -u +"%Y-%m-%d" 2>/dev/null || echo ""
   fi
@@ -527,7 +528,7 @@ spinner() {
     local delay=0.1
     
     # Verificar que el PID existe
-    if ! kill -0 $pid 2>/dev/null; then
+    if ! kill -0 "$pid" 2>/dev/null; then
         return 1
     fi
     
@@ -535,7 +536,7 @@ spinner() {
     tput civis 2>/dev/null || true
     
     # Mientras el proceso esté vivo
-    while kill -0 $pid 2>/dev/null; do
+    while kill -0 "$pid" 2>/dev/null; do
         for ((i=0; i<${#chars}; i++)); do
             printf "\r%s" "${chars:$i:1}"
             sleep $delay
@@ -553,13 +554,13 @@ spinner_unicode() {
     local chars="·   ·  · ·  ·   ·  · ·  ·   ·"
     local delay=0.08
     
-    if ! kill -0 $pid 2>/dev/null; then
+    if ! kill -0 "$pid" 2>/dev/null; then
         return 1
     fi
     
     tput civis 2>/dev/null || true
     
-    while kill -0 $pid 2>/dev/null; do
+    while kill -0 "$pid" 2>/dev/null; do
         for ((i=0; i<${#chars}; i++)); do
             printf "\r%s" "${chars:$i:1}"
             sleep $delay
@@ -575,26 +576,26 @@ spinner_dots() {
     local pid=$1
     local delay=0.3
     
-    if ! kill -0 $pid 2>/dev/null; then
+    if ! kill -0 "$pid" 2>/dev/null; then
         return 1
     fi
     
     tput civis 2>/dev/null || true
     
-    while kill -0 $pid 2>/dev/null; do
+    while kill -0 "$pid" 2>/dev/null; do
         printf "."
         sleep $delay
     done
     
     # Limpiar la línea de puntos
-    printf "\r$(printf "%*s" 30)\r"
+    printf "\r%s\r" "$(printf "%*s" 30 '')"
     tput cnorm 2>/dev/null || true
 }
 
 # Helper para ejecutar comandos con spinner automáticamente
 run_with_spinner() {
     local command="$1"
-    local message="${2:-Procesando...}"
+        local message="${2:-Procesando...}"
     local spinner_type="${3:-ascii}"
     
     # Mostrar mensaje inicial
