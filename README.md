@@ -3,16 +3,31 @@
 [![Language](https://img.shields.io/badge/language-Shell%20Script-blue.svg)](https://en.wikipedia.org/wiki/Shell_script)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![bash](https://img.shields.io/badge/bash-5.3-blue)](#) [![zsh](https://img.shields.io/badge/zsh-5.9-blue)](#)
+[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/kero-sh/shell-helpers/releases/tag/v2.0.0)
 
-A collection of useful helper functions for shell scripting, designed to make your scripts more robust, colorful, and user-friendly.
+A comprehensive Bootstrap 5.3-inspired UI framework for shell scripting, designed to make your scripts more robust, colorful, and user-friendly with modern terminal support.
 
 ## Features
 
-- **Colorful Logging**: A set of functions for logging messages with different levels (`INFO`, `WARN`, `ERROR`, `DEBUG`, etc.) and colors.
-- **Color Functions**: Easily add foreground and background colors to your text.
-- **Confirmation Prompt**: A `confirm` function to safely ask for user confirmation in interactive scripts.
-- **Dependency Checking**: `ensure_commands` function to verify that required CLI tools are installed.
-- **Utility Functions**: Various helpers for terminal interactions, titles, and environment setup.
+### UI Framework (Bootstrap 5.3 Style)
+- **150+ Color Functions**: Complete Bootstrap 5.3 color palette with semantic naming
+- **Typography Modifiers**: Bold, italic, underline, strikethrough, and combinations
+- **Components**: Alerts, badges, and UI elements with modern styling
+- **Color Variants**: 100-900 scale for all theme colors
+- **Subtle Utilities**: Background and border subtle variants
+- **Spinners**: ASCII, Unicode, and dots spinners with auto-management
+
+### Enhanced Terminal Support
+- **Modern Terminals**: iTerm, Warp, WezTerm, VS Code, Alacritty, Kitty
+- **CI/CD Compatibility**: GitHub Actions, GitLab CI, Jenkins with automatic TTY detection
+- **Smart Color Detection**: Respects NO_COLOR and adapts to terminal capabilities
+- **Cross-Platform**: macOS, Linux, Windows (WSL/Cygwin)
+
+### Core Functionality
+- **Colorful Logging**: Enhanced logging with Bootstrap-style colors and formatting
+- **Confirmation Prompts**: Smart prompts that work in CI/CD environments
+- **Dependency Checking**: Verify required CLI tools are installed
+- **Quiet Mode**: Suppress output when needed (respecting QUIET environment variable)
 
 ## Prerequisites
 
@@ -47,76 +62,111 @@ fi
 
 ## Examples
 
-### Logging
+### Bootstrap 5.3 UI Framework
 
-The logging functions print messages to `stderr` with appropriate colors and prefixes.
+The new UI framework provides modern, Bootstrap-inspired styling for your scripts.
 
-#### Log Levels
-
-You can control the verbosity of the script's output by setting the `VERBOSITY` environment variable. The available levels are hierarchical:
-
--   `QUIET`: No logs are displayed.
--   `ERROR`: Only `error` and `fatal` messages are shown.
--   `WARN`: Shows `error`, `fatal`, and `warn`/`warning` messages.
--   `INFO` (Default): Shows `error`, `fatal`, `warn`, `info`, `success`, and `notice` messages.
--   `DEBUG`: Shows all messages except `verbose` and `trace`.
--   `VERBOSE`: Shows all messages except `trace`.
--   `TRACE`: Shows all messages.
-
-If `VERBOSITY` is not set, it defaults to `INFO`.
+#### Typography & Colors
 
 ```bash
 #!/bin/bash
 
 source "libs/helpers.sh"
 
-# Set verbosity level (optional, defaults to INFO)
-# Available levels: QUIET, ERROR, WARN, INFO, DEBUG, VERBOSE, TRACE
-export VERBOSITY="DEBUG"
+# Modern typography
+title "Main Title"
+subtitle "Descriptive subtitle"
+paragraph "This is regular paragraph text."
+
+# Bootstrap 5.3 semantic colors
+echo "$(text_primary "Primary text in Bootstrap blue")"
+echo "$(text_success "Success text in Bootstrap green")"
+echo "$(text_danger "Danger text in Bootstrap red")"
+echo "$(text_warning "Warning text in Bootstrap yellow")"
+echo "$(text_info "Info text in Bootstrap cyan")"
+
+# Color variants (100-900 scale)
+echo "$(text_blue_300 "Light blue text")"
+echo "$(text_blue_600 "Medium blue text")"
+echo "$(text_blue_900 "Dark blue text")"
+
+# Typography modifiers
+echo "$(fw_bold "Bold text")"
+echo "$(fw_italic "Italic text")"
+echo "$(fw_underline "Underlined text")"
+echo "$(fw_strikethrough "Strikethrough text")"
+```
+
+#### UI Components
+
+```bash
+#!/bin/bash
+
+source "libs/helpers.sh"
+
+# Alerts
+alert_success "Operation completed successfully!"
+alert_warning "Please review the following warnings."
+alert_danger "Critical error occurred!"
+alert_info "Additional information available."
+
+# Badges
+echo "Status: $(badge_primary "Active")"
+echo "Version: $(badge_success "v2.0.0")"
+echo "State: $(badge_danger "Error")"
+
+# Spinners
+run_with_spinner "sleep 3" "Downloading file..." "ascii"
+run_with_spinner "curl -s api.example.com" "Processing data..." "unicode"
+
+# Progress bar
+for i in {1..10}; do
+    progress_bar $i 10
+    sleep 0.3
+done
+```
+
+### Enhanced Logging
+
+The logging functions now use Bootstrap 5.3 colors and smart terminal detection.
+
+```bash
+#!/bin/bash
+
+source "libs/helpers.sh"
+
+# Set quiet mode (suppresses non-error output)
+export QUIET=false
 
 info "Starting the script..."
-debug "This is a debug message, only shown if VERBOSITY is DEBUG or higher."
+debug "This is a debug message."
 warn "A non-critical issue occurred."
 error "Something went wrong!"
 success "Operation completed successfully."
-notice "This is a notice for the user."
 
 # The fatal function will exit the script with status 1
 fatal "A critical error occurred. Exiting."
 ```
 
-### Coloring Text
+### CI/CD Compatibility
 
-You can easily color your text using the provided functions.
-
-```bash
-#!/bin/bash
-
-source "libs/helpers.sh"
-
-echo "This is the default color."
-echo "$(red "This text is red.")"
-echo "$(green "This text is green.")"
-echo "$(blue "This text is blue.")"
-echo "$(yellow "This is yellow text on a $(bg_red "red background").")"
-echo "$(bright_cyan "This is bright cyan!")"
-```
-
-### Confirmation Prompt
-
-Safely ask for user confirmation. The function handles non-interactive environments.
+The framework automatically detects CI/CD environments and adapts accordingly.
 
 ```bash
 #!/bin/bash
 
 source "libs/helpers.sh"
 
-if confirm "Do you want to install the new package? [y/N]: "; then
-    info "Installing package..."
-    # Your installation logic here
+# This works in both interactive terminals and CI/CD
+if confirm "Do you want to proceed with deployment?"; then
+    run_with_spinner "deploy_application" "Deploying application..." "dots"
+    success "Deployment completed!"
 else
-    warn "Installation skipped."
+    warn "Deployment cancelled."
 fi
+
+# Smart color detection - works in all environments
+echo "$(text_primary "This message will be colored appropriately for your environment")"
 ```
 
 ### Ensuring Dependencies
@@ -138,28 +188,137 @@ info "All required dependencies are installed."
 
 ## Function Reference
 
-### Logging
-- `success <message>`
-- `notice <message>`
-- `info <message>`
-- `warning <message>` / `warn <message>`
-- `error <message>`
-- `fatal <message>` (exits the script)
-- `debug <message>`
-- `verbose <message>`
-- `trace <message>`
+### Logging (Bootstrap 5.3 Styled)
+- `success <message>` - Green success message
+- `info <message>` - Blue informational message  
+- `warn <message>` / `warning <message>` - Yellow warning message
+- `error <message>` - Red error message
+- `debug <message>` - Gray debug message
+- `fatal <message>` - Red fatal message (exits script)
 
-### Colors
-- **Foreground**: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, and `bright_*` versions.
-- **Background**: `bg_black`, `bg_red`, `bg_green`, `bg_yellow`, `bg_blue`, `bg_magenta`, `bg_cyan`, `bg_white`, and `bg_bright_*` versions.
+### Typography Modifiers
+- `fw_bold <text>` - Bold text
+- `fw_italic <text>` - Italic text
+- `fw_underline <text>` - Underlined text
+- `fw_strikethrough <text>` - Strikethrough text
+- `fw_bold_italic <text>` - Bold and italic
+- `fw_bold_underline <text>` - Bold and underlined
+- `fw_italic_underline <text>` - Italic and underlined
+- `fw_bold_italic_underline <text>` - Bold, italic, and underlined
+
+### Bootstrap 5.3 Semantic Colors
+- `text_primary <text>` - Primary blue
+- `text_secondary <text>` - Secondary gray
+- `text_success <text>` - Success green
+- `text_danger <text>` - Danger red
+- `text_warning <text>` - Warning yellow
+- `text_info <text>` - Info cyan
+- `text_light <text>` - Light gray
+- `text_dark <text>` - Dark gray
+- `text_muted <text>` - Muted gray (deprecated in 5.3)
+
+### Bootstrap 5.3 Body Colors
+- `text_body <text>` - Body text default
+- `text_body_emphasis <text>` - Body text emphasized
+- `text_body_secondary <text>` - Body text secondary
+- `text_body_tertiary <text>` - Body text tertiary
+
+### Basic Colors
+- `text_black <text>` - Pure black
+- `text_white <text>` - Pure white
+- `text_blue <text>` - Blue
+- `text_indigo <text>` - Indigo
+- `text_purple <text>` - Purple
+- `text_pink <text>` - Pink
+- `text_red <text>` - Red
+- `text_orange <text>` - Orange
+- `text_yellow <text>` - Yellow
+- `text_green <text>` - Green
+- `text_teal <text>` - Teal
+- `text_cyan <text>` - Cyan
+- `text_gray <text>` - Gray
+
+### Color Variants (100-900 Scale)
+- `text_blue_100` to `text_blue_900`
+- `text_green_100` to `text_green_900`
+- `text_red_100` to `text_red_900`
+- `text_yellow_100` to `text_yellow_900`
+- `text_gray_100` to `text_gray_900`
+
+### Emphasis Colors
+- `text_primary_emphasis <text>` - Light primary
+- `text_secondary_emphasis <text>` - Light secondary
+- `text_success_emphasis <text>` - Light success
+- `text_danger_emphasis <text>` - Light danger
+- `text_warning_emphasis <text>` - Light warning
+- `text_info_emphasis <text>` - Light info
+- `text_light_emphasis <text>` - Very light
+- `text_dark_emphasis <text>` - Dark emphasis
+
+### Opacity Utilities
+- `text_opacity_25 <text>` - 25% opacity
+- `text_opacity_50 <text>` - 50% opacity
+- `text_opacity_75 <text>` - 75% opacity
+- `text_opacity_100 <text>` - 100% opacity
+
+### Background Colors
+- `bg_primary <text>` - Primary background
+- `bg_secondary <text>` - Secondary background
+- `bg_success <text>` - Success background
+- `bg_danger <text>` - Danger background
+- `bg_warning <text>` - Warning background
+- `bg_info <text>` - Info background
+- `bg_light <text>` - Light background
+- `bg_dark <text>` - Dark background
+
+### Subtle Utilities
+- `bg_primary_subtle <text>` - Primary subtle background
+- `bg_secondary_subtle <text>` - Secondary subtle background
+- `bg_success_subtle <text>` - Success subtle background
+- `bg_danger_subtle <text>` - Danger subtle background
+- `bg_warning_subtle <text>` - Warning subtle background
+- `bg_info_subtle <text>` - Info subtle background
+- `bg_light_subtle <text>` - Light subtle background
+- `bg_dark_subtle <text>` - Dark subtle background
+
+### UI Components
+- `title <text>` - Main title with underline
+- `subtitle <text>` - Subtitle in muted italic
+- `paragraph <text>` - Regular paragraph text
+- `hr` - Horizontal rule
+- `alert_success <message>` - Success alert
+- `alert_warning <message>` - Warning alert
+- `alert_danger <message>` - Danger alert
+- `alert_info <message>` - Info alert
+- `badge_primary <text>` - Primary badge
+- `badge_success <text>` - Success badge
+- `badge_danger <text>` - Danger badge
+- `badge_warning <text>` - Warning badge
+- `badge_info <text>` - Info badge
+- `badge_secondary <text>` - Secondary badge
+- `badge_dark <text>` - Dark badge
+
+### Spinners
+- `spinner <pid>` - ASCII spinner
+- `spinner_unicode <pid>` - Unicode spinner
+- `spinner_dots <pid>` - Dots spinner
+- `run_with_spinner <command> <message> <type>` - Auto spinner
+- `progress_bar <current> <total> <width> <char>` - Progress bar
 
 ### Utilities
-- `confirm [prompt]`
-- `ensure_commands <cmd1> [cmd2] ...`
-- `ensure_dependencies <cmd1> [cmd2] ...` (also sets up GitLab token)
-- `printtitle <title>`
-- `has_tty_available`
-- `may_color`
+- `confirm [prompt]` - User confirmation prompt
+- `ensure_commands <cmd1> [cmd2] ...` - Check command availability
+- `ensure_dependencies <cmd1> [cmd2] ...` - Check commands + setup GitLab
+- `printtitle <title>` - Legacy title (deprecated)
+- `has_tty_available` - Check TTY availability
+- `may_color` - Check color support
+- `is_quiet` - Check QUIET mode
+
+### Environment Variables
+- `QUIET=true|1` - Suppress non-error output
+- `NO_COLOR=1` - Disable colors (standard)
+- `CI=true` - CI/CD environment detection
+- `TERM_PROGRAM` - Terminal program detection
 
 ---
 
