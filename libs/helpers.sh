@@ -382,28 +382,28 @@ text_body_secondary() { printf "\033[38;5;245m%s\033[39m" "$1"; }  # Body text s
 text_body_tertiary()  { printf "\033[38;5;243m%s\033[39m" "$1"; }  # Body text tertiary
 
 # Bootstrap 5.3 Basic colors
-text_black() { printf "${FG_BLACK}%s${RC}" "$1"; }   # Negro puro
-text_white() { printf "${FG_WHITE}%s${RC}" "$1"; }  # Blanco puro
+text_black() { printf "${FG_BLACK}%s${RC}" "$1"; }   # Pure black
+text_white() { printf "${FG_WHITE}%s${RC}" "$1"; }  # Pure white
 
 # Bootstrap 5.3 Emphasis colors (lighter variants)
-text_primary_emphasis()   { printf "\033[38;5;111m%s\033[39m" "$1"; }  # Azul claro
-text_secondary_emphasis() { printf "\033[38;5;248m%s\033[39m" "$1"; }  # Gris claro
-text_success_emphasis()   { printf "\033[38;5;113m%s\033[39m" "$1"; }  # Verde claro
-text_danger_emphasis()    { printf "\033[38;5;203m%s\033[39m" "$1"; }  # Rojo claro
-text_warning_emphasis()   { printf "\033[38;5;221m%s\033[39m" "$1"; }  # Amarillo claro
-text_info_emphasis()      { printf "\033[38;5;117m%s\033[39m" "$1"; }  # Cyan claro
-text_light_emphasis()     { printf "\033[38;5;255m%s\033[39m" "$1"; }  # Blanco muy claro
-text_dark_emphasis()      { printf "\033[38;5;238m%s\033[39m" "$1"; }  # Gris oscuro énfasis
+text_primary_emphasis()   { printf "\033[38;5;111m%s\033[39m" "$1"; }  # Light blue
+text_secondary_emphasis() { printf "\033[38;5;248m%s\033[39m" "$1"; }  # Light gray
+text_success_emphasis()   { printf "\033[38;5;113m%s\033[39m" "$1"; }  # Light green
+text_danger_emphasis()    { printf "\033[38;5;203m%s\033[39m" "$1"; }  # Light red
+text_warning_emphasis()   { printf "\033[38;5;221m%s\033[39m" "$1"; }  # Light yellow
+text_info_emphasis()      { printf "\033[38;5;117m%s\033[39m" "$1"; }  # Light cyan
+text_light_emphasis()     { printf "\033[38;5;255m%s\033[39m" "$1"; }  # Very light white
+text_dark_emphasis()      { printf "\033[38;5;238m%s\033[39m" "$1"; }  # Dark gray emphasis
 
 # Bootstrap 5.3 Opacity utilities (simulated with lighter colors)
-text_opacity_25() { printf "\033[38;5;254m%s\033[39m" "$1"; }  # 25% opacity (muy claro)
-text_opacity_50() { printf "\033[38;5;248m%s\033[39m" "$1"; }  # 50% opacity (medio)
-text_opacity_75() { printf "\033[38;5;240m%s\033[39m" "$1"; }  # 75% opacity (oscuro)
-text_opacity_100() { printf "\033[38;5;232m%s\033[39m" "$1"; } # 100% opacity (completo)
+text_opacity_25() { printf "\033[38;5;254m%s\033[39m" "$1"; }  # 25% opacity (very light)
+text_opacity_50() { printf "\033[38;5;248m%s\033[39m" "$1"; }  # 50% opacity (medium)
+text_opacity_75() { printf "\033[38;5;240m%s\033[39m" "$1"; }  # 75% opacity (dark)
+text_opacity_100() { printf "\033[38;5;232m%s\033[39m" "$1"; } # 100% opacity (complete)
 
 # Bootstrap 5.3 Legacy opacity (deprecated but included for compatibility)
-text_black_50() { printf "\033[38;5;242m%s\033[39m" "$1"; }  # Negro 50% (DEPRECATED)
-text_white_50() { printf "\033[38;5;248m%s\033[39m" "$1"; }  # Blanco 50% (DEPRECATED)
+text_black_50() { printf "\033[38;5;242m%s\033[39m" "$1"; }  # Black 50% (DEPRECATED)
+text_white_50() { printf "\033[38;5;248m%s\033[39m" "$1"; }  # White 50% (DEPRECATED)
 
 # Bootstrap 5.3 Color Variants (100-900 scale)
 # Blue variants
@@ -480,7 +480,7 @@ border_danger_subtle()    { printf "\033[38;5;203m%s${RC}" "$1"; }   # Danger bo
 border_light_subtle()     { printf "\033[38;5;250m%s${RC}" "$1"; }   # Light border subtle
 border_dark_subtle()      { printf "\033[38;5;245m%s${RC}" "$1"; }   # Dark border subtle
 
-# Paleta completa extendida (Estilo Bootstrap: blue, indigo, purple, pink, red, orange, yellow, green, teal, cyan, white, gray)
+# Complete extended palette (Bootstrap style: blue, indigo, purple, pink, red, orange, yellow, green, teal, cyan, white, gray)
 text_blue()      { printf "${FG_BLUE}%s${RC}" "$1"; }
 text_indigo()    { printf "${FG_INDIGO}%s${RC}" "$1"; }
 text_purple()    { printf "${FG_MAGENTA}%s${RC}" "$1"; }
@@ -492,7 +492,7 @@ text_green()     { printf "${FG_GREEN}%s${RC}" "$1"; }
 text_teal()      { printf "${FG_TEAL}%s${RC}" "$1"; }
 text_cyan()      { printf "${FG_CYAN}%s${RC}" "$1"; }
 text_white()     { printf "${FG_WHITE}%s${RC}" "$1"; }
-text_gray()      { printf "${FG_GRAY}%s${RC}" "$1"; }    # Texto tenue
+text_gray()      { printf "${FG_GRAY}%s${RC}" "$1"; }    # Dim text
 
 # Background colors
 bg_primary()   { printf "${BG_BLUE}%s${RC}" "$1"; }
@@ -504,7 +504,7 @@ bg_info()      { printf "${BG_CYAN}%s${RC}" "$1"; }
 bg_light()     { printf "${BG_LIGHT}%s${RC}" "$1"; }
 bg_dark()      { printf "${BG_DARK}%s${RC}" "$1"; }
 
-# Fondos de la paleta extendida
+# Extended palette backgrounds
 bg_black()     { printf "${BG_BLACK}%s${RC}" "$1"; }
 bg_blue()      { printf "${BG_BLUE}%s${RC}" "$1"; }
 bg_indigo()    { printf "\033[48;5;99m%s\033[49m" "$1"; }
@@ -585,7 +585,7 @@ spinner() {
     tput cnorm 2>/dev/null || true
 }
 
-# Spinner Unicode moderno (si el terminal lo soporta)
+# Modern Unicode spinner (if terminal supports it)
 spinner_unicode() {
     local pid=$1
     local chars="·   ·  · ·  ·   ·  · ·  ·   ·"
@@ -608,7 +608,7 @@ spinner_unicode() {
     tput cnorm 2>/dev/null || true
 }
 
-# Spinner de puntos animados
+# Animated dots spinner
 spinner_dots() {
     local pid=$1
     local delay=0.3
@@ -624,25 +624,25 @@ spinner_dots() {
         sleep $delay
     done
     
-    # Limpiar la línea de puntos
+    # Clear the dots line
     printf "\r%s\r" "$(printf "%*s" 30 '')"
     tput cnorm 2>/dev/null || true
 }
 
-# Helper para ejecutar comandos con spinner automáticamente
+# Helper to execute commands with spinner automatically
 run_with_spinner() {
     local command="$1"
-        local message="${2:-Procesando...}"
+        local message="${2:-Processing...}"
     local spinner_type="${3:-ascii}"
     
-    # Mostrar mensaje inicial
+    # Show initial message
     printf "%s" "$(text_info "$message") "
     
-    # Ejecutar comando en background
+    # Execute command in background
     eval "$command" &
     local pid=$!
     
-    # Elegir tipo de spinner
+    # Choose spinner type
     case "$spinner_type" in
         "unicode"|"u")
             spinner_unicode $pid
@@ -655,20 +655,20 @@ run_with_spinner() {
             ;;
     esac
     
-    # Esperar y verificar resultado
+    # Wait and verify result
     wait $pid
     local exit_code=$?
     
     if [[ $exit_code -eq 0 ]]; then
-        printf "%s\n" "$(text_success "¡Listo!")"
+        printf "%s\n" "$(text_success "Done!")"
     else
-        printf "%s\n" "$(text_danger "Error (código: $exit_code)")"
+        printf "%s\n" "$(text_danger "Error (code: $exit_code)")"
     fi
     
     return $exit_code
 }
 
-# Barra de progreso simple
+# Simple progress bar
 progress_bar() {
     local current=$1
     local total=$2
@@ -686,7 +686,7 @@ progress_bar() {
     fi
 }
 
-# Función para generar líneas de argumentos para tablas de uso
+# Function to generate argument lines for usage tables
 # Usage: parse_arg "key" "value" "default" "description"
 parse_arg() {
     local key="$1"
