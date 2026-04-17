@@ -29,7 +29,11 @@ success "Process completed!"
 
 echo
 echo "5. Failing command (error handling demo):"
-run_with_spinner "sleep 1 && false" "Attempting failed operation..."
+if run_with_spinner "sleep 1 && false" "Attempting failed operation..." 2>/dev/null; then
+    echo "Command succeeded (unexpected)"
+else
+    echo "Command failed as expected"
+fi
 
 echo
 echo "6. Manual progress bar:"
