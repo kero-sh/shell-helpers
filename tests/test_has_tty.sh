@@ -1,28 +1,28 @@
 #!/usr/bin/env bash
 
-# Test de la función mejorada has_tty_available()
+# Test for the improved has_tty_available() function
 source "$(dirname "$0")/../libs/helpers.sh"
 
-echo "=== Test de has_tty_available() Mejorada ==="
+echo "=== Test Enhanced has_tty_available() ==="
 echo
 
-# Test 1: Entorno actual
-echo "1. Entorno actual:"
-echo -n "   TTY disponible: "
+# Test 1: Current environment
+echo "1. Current environment:"
+echo -n "   TTY available: "
 if has_tty_available; then
-    echo "$(text_success "SI")"
+    echo "$(text_success "YES")"
 else
     echo "$(text_danger "NO")"
 fi
 
 echo
-echo "2. Simulando CI/CD (debería retornar SI):"
+echo "2. Simulating CI/CD (should return YES):"
 
 # GitHub Actions
 export GITHUB_ACTIONS=true
 echo -n "   GitHub Actions: "
 if has_tty_available; then
-    echo "$(text_success "SI")"
+    echo "$(text_success "YES")"
 else
     echo "$(text_danger "NO")"
 fi
@@ -32,7 +32,7 @@ unset GITHUB_ACTIONS
 export GITLAB_CI=true
 echo -n "   GitLab CI: "
 if has_tty_available; then
-    echo "$(text_success "SI")"
+    echo "$(text_success "YES")"
 else
     echo "$(text_danger "NO")"
 fi
@@ -42,30 +42,30 @@ unset GITLAB_CI
 export JENKINS_URL="http://jenkins.local"
 echo -n "   Jenkins: "
 if has_tty_available; then
-    echo "$(text_success "SI")"
+    echo "$(text_success "YES")"
 else
     echo "$(text_danger "NO")"
 fi
 
-# CI genérico
+# Generic CI
 unset JENKINS_URL
 export CI=true
-echo -n "   CI genérico: "
+echo -n "   Generic CI: "
 if has_tty_available; then
-    echo "$(text_success "SI")"
+    echo "$(text_success "YES")"
 else
     echo "$(text_danger "NO")"
 fi
 
 echo
-echo "3. Terminales sin TTY (deberían retornar NO):"
+echo "3. Non-TTY terminals (should return NO):"
 
-# Terminal dumb
+# Dumb terminal
 unset CI
 export TERM="dumb"
 echo -n "   Terminal dumb: "
 if has_tty_available; then
-    echo "$(text_success "SI")"
+    echo "$(text_success "YES")"
 else
     echo "$(text_danger "NO")"
 fi
@@ -74,35 +74,35 @@ fi
 TERM="unknown"
 echo -n "   Terminal unknown: "
 if has_tty_available; then
-    echo "$(text_success "SI")"
+    echo "$(text_success "YES")"
 else
     echo "$(text_danger "NO")"
 fi
 
 echo
-echo "4. Test de confirm_action en CI/CD:"
+echo "4. Test confirm_action in CI/CD:"
 
-# Simular confirmación en CI/CD
+# Simulate confirmation in CI/CD
 export CI=true
-echo -n "   confirm_action en CI (debería funcionar): "
-if confirm_action "¿Continuar? [y/N]: " <<< "y"; then
-    echo "$(text_success "Confirmado")"
+echo -n "   confirm_action in CI (should work): "
+if confirm_action "Continue? [y/N]: " <<< "y"; then
+    echo "$(text_success "Confirmed")"
 else
-    echo "$(text_danger "Cancelado")"
+    echo "$(text_danger "Cancelled")"
 fi
 
 echo
-echo "5. Test de confirm_action con QUIET en CI/CD:"
+echo "5. Test confirm_action with QUIET in CI/CD:"
 export QUIET=true
-echo -n "   confirm_action con QUIET en CI: "
-if confirm_action "¿Continuar? [y/N]: " <<< "y"; then
-    echo "$(text_success "Confirmado")"
+echo -n "   confirm_action with QUIET in CI: "
+if confirm_action "Continue? [y/N]: " <<< "y"; then
+    echo "$(text_success "Confirmed")"
 else
-    echo "$(text_danger "Error esperado (QUIET activado)")"
+    echo "$(text_danger "Expected error (QUIET enabled)")"
 fi
 
-# Limpiar variables
+# Clean variables
 unset GITHUB_ACTIONS GITLAB_CI JENKINS_URL CI QUIET TERM
 
 echo
-echo "=== Test completado ==="
+echo "=== Test Completed ==="

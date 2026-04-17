@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# Test de las nuevas funciones de colores Bootstrap 5.3
+# Test for new Bootstrap 5.3 color functions
 source "$(dirname "$0")/../libs/helpers.sh"
 
-echo "=== Test de Colores Bootstrap 5.3 ==="
+echo "=== Test Bootstrap 5.3 Colors ==="
 echo
 
 # Test 1: Body colors
@@ -33,4 +33,4 @@ echo "Standard: $(text_primary "primary") vs Emphasis: $(text_primary_emphasis "
 echo "Standard: $(text_success "success") vs Emphasis: $(text_success_emphasis "success-emphasis")"
 
 echo
-echo "=== Test completado ==="
+echo "=== Test Completed ==="

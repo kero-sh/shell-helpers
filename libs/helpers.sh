@@ -720,7 +720,7 @@ max_length() {
 }
 
 
-# Función para formatear salida de parse_arg() en una tabla bonita
+# Function to format output of parse_arg() in a nice table
 # Usage: { parse_arg "key1" "value" "desc1"; parse_arg "key2" "value" "desc2"; } | toUsage
 toUsage() {	
 	declare -a key_array value_array default_array description_array lines
@@ -733,13 +733,13 @@ toUsage() {
     
   done
 
-  # Obten los maximos
+  # Get the maximums
   local max_key=$(max_length "${key_array[@]}")
   local max_value=$(max_length "${value_array[@]}")
   local max_default=$(max_length "${default_array[@]}")
   local max_description=$(max_length "${description_array[@]}")
   
-  # Imprime la tabla
+  # Print the table
 
   for line in "${lines[@]}"; do
 	local key="$(echo "$line" | cut -d';' -f1)"
@@ -747,7 +747,7 @@ toUsage() {
 	local default="$(echo "$line" | cut -d';' -f3)"
 	local description="$(echo "$line" | cut -d';' -f4)"
 	
-	# Primera línea: key, value, default
+	# First line: key, value, default
 	printf "%*s" "$1" ""
     printf "${FG_GREEN}%-${max_key}s${RC}" "$key"
     printf "  ${FG_YELLOW}%-${max_value}s${RC}" "$value"    
@@ -756,11 +756,140 @@ toUsage() {
 	fi
 	echo
 	
-	# Segunda línea: descripción con indentación extra si existe
+	# Second line: description with extra indentation if exists
 	if [ -n "$description" ]; then
 		printf "%*s" "$(( $1 + max_key + 4 ))" ""
 		printf "${FG_WHITE}%s${RC}\n" "$description"
 	fi
   done
   
+}
+
+# ==========================================
+# 🛠️ UTILITY FUNCTIONS
+# ==========================================
+
+# Install yq tool across different operating systems
+function install_yq() {
+  case $(uname) in
+    Darwin) brew install yq;;
+    Linux)
+      os=$(cat /etc/os-release | grep '^ID='|cut -d'=' -f2 | tr -d '"')
+      case $os in
+        alpine) apk add wget;;
+        ubuntu|debian) apt update; apt install wget;;
+        centos|fedora|rhel) yum install wget;;
+      esac;
+
+      mkdir -p ~/bin
+      export PATH=~/bin:$PATH
+      wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O ~/bin/yq && chmod +x ~/bin/yq
+      ;;
+      *)
+      echo "Unsupported OS $(uname)"
+      exit 1
+    ;;
+  esac
+}
+
+# Install jq tool across different operating systems
+function install_jq() {
+  case $(uname) in
+    Darwin) brew install jq;;
+    Linux)
+      os=$(cat /etc/os-release | grep '^ID='|cut -d'=' -f2 | tr -d '"')
+      case $os in
+        alpine) apk add wget;;
+        ubuntu|debian) apt update; apt install wget;;
+        centos|fedora|rhel) yum install wget;;
+      esac;
+
+      mkdir -p ~/bin
+      export PATH=~/bin:$PATH
+      wget https://github.com/stedolan/jq/releases/latest/download/jq-linux64 -O ~/bin/jq && chmod +x ~/bin/jq
+      ;;
+      *)
+      echo "Unsupported OS $(uname)"
+      exit 1
+    ;;
+  esac
+}
+
+# Check if a log level should be displayed based on LATAM_LOG_LEVEL environment variable
+# Usage: get_log_level "INFO" && echo "Show info message"
+function get_log_level() {
+  case "${LATAM_LOG_LEVEL:-"INFO"}" in
+    QUIET) LL=0 ;;
+    ERROR) LL=1 ;;
+    WARN) LL=2 ;;
+    INFO) LL=3 ;;
+    DEBUG) LL=4 ;;
+    *) LL=3 ;;
+  esac
+
+  case "$1" in
+    QUIET) EE=0 ;;
+    ERROR) EE=1 ;;
+    WARN) EE=2 ;;
+    INFO) EE=3 ;;
+    DEBUG) EE=4 ;;
+    *) EE=3 ;;
+  esac
+
+  if [ $LL -ge $EE ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Verify that a file contains valid content (not just empty lines or comments)
+# Usage: verify_empty_file "path/to/file"
+function verify_empty_file() {
+  local SRC=$1
+  local total_lines=0
+  local empty_or_comment_lines=0
+
+  if [ -f "$SRC" ]; then
+    while IFS= read -r line; do
+      total_lines=$((total_lines + 1))
+      trimmed_line=$(echo "$line" | sed 's/^[ \t]*//;s/[ \t]*$//')
+      if [[ -z "$trimmed_line" || "$trimmed_line" == \#* ]]; then
+        empty_or_comment_lines=$((empty_or_comment_lines + 1))
+      fi
+    done < "$SRC"
+
+    if [[ "$empty_or_comment_lines" -eq "$total_lines" ]]; then
+      error "This file '$SRC' has not valid content... please check."
+      exit 1
+    else
+      info "Content of file '$SRC' is valid!"
+    fi
+  else
+    echo "File '$SRC' does not exist!"
+    exit 1
+  fi
+}
+
+# Sanitize string by removing quotes, spaces, and converting to lowercase
+# Usage: sanitize "Hello World!" -> "helloworld!" or echo "Hello" | sanitize
+function sanitize() {
+  local input="${1:-}"
+  # If no argument provided, read from stdin only if data is available
+  if [[ -z "$input" ]] && [[ -t 0 ]]; then
+    # No stdin available, return empty
+    echo ""
+    return
+  elif [[ -z "$input" ]]; then
+    # Read from stdin
+    input=$(cat)
+  fi
+  echo "$input" | sed 's/'\''//g' | sed 's/"//g' | sed 's/ //g' | tr -d '\n' | tr -d '\r' | tr '[:upper:]' '[:lower:]'
+}
+
+# URL encode strings (requires jq)
+# Usage: urlencode "Hello World!" -> "Hello%20World%21"
+function urlencode() {
+  local string="$@"
+  jq -nr --arg str "$string" '$str|@uri'
 }
