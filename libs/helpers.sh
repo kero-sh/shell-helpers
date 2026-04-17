@@ -113,11 +113,12 @@ function echoc() {
 
 function is_quiet() { [[ "${QUIET:-}" == "true" || "${QUIET:-}" == "1" ]]; }
 
-function info()    { is_quiet || printf "%s %s\n" "$(text_info "$(fw_bold "[INFO]")")" "$*" >&2;   	    }
-function debug()   { is_quiet || printf "%s %s\n" "$(text_secondary "$(fw_bold "[DEBUG]")")" "$*" >&2;  }
-function error()   { is_quiet || printf "%s %s\n" "$(text_danger "$(fw_bold "[ERROR]")")" "$*" >&2;     }
-function warn()    { is_quiet || printf "%s %s\n" "$(text_warning "$(fw_bold "[WARN]")")" "$*" >&2;     }
-function success() { is_quiet || printf "%s %s\n" "$(text_success "$(fw_bold "[SUCCESS]")")" "$*" >&2;  }
+function info()    { is_quiet || printf "%s %s\n" "$(text_info      "$(fw_bold "[ INFO  ]")")" "$*" >&2;}
+function debug()   { is_quiet || printf "%s %s\n" "$(text_secondary "$(fw_bold "[ DEBUG ]")")" "$*" >&2;}
+function error()   { is_quiet || printf "%s %s\n" "$(text_danger    "$(fw_bold "[ ERROR ]")")" "$*" >&2;}
+function success() { is_quiet || printf "%s %s\n" "$(text_success   "$(fw_bold "[SUCCESS]")")" "$*" >&2;}
+function warning() { is_quiet || printf "%s %s\n" "$(text_warning   "$(fw_bold "[WARNING]")")" "$*" >&2;}
+function warn() { warning "$@"; }
 
 function has_tty_available() {
 	# 1. Check for CI/CD environments first - assume TTY is available for confirmations
@@ -328,7 +329,11 @@ FG_BLACK="\033[38;5;16m"
 FG_GREEN="\033[38;5;34m"
 FG_YELLOW="\033[38;5;220m"
 FG_BLUE="\033[38;5;33m"
+FG_INDIGO="\033[38;5;99m"
 FG_MAGENTA="\033[38;5;135m"
+FG_PINK="\033[38;5;162m"
+FG_ORANGE="\033[38;5;208m"
+FG_TEAL="\033[38;5;43m"
 FG_CYAN="\033[38;5;51m"
 FG_WHITE="\033[38;5;231m"
 FG_GRAY="\033[38;5;245m"
@@ -339,10 +344,16 @@ BG_RED="\033[48;5;196m"
 BG_GREEN="\033[48;5;34m"
 BG_YELLOW="\033[48;5;220m"
 BG_BLUE="\033[48;5;33m"
+BG_INDIGO="\033[48;5;99m"
 BG_MAGENTA="\033[48;5;135m"
+BG_PINK="\033[48;5;162m"
+BG_ORANGE="\033[48;5;208m"
+BG_TEAL="\033[48;5;43m"
 BG_CYAN="\033[48;5;51m"
 BG_WHITE="\033[48;5;231m"
 BG_GRAY="\033[48;5;245m"
+BG_LIGHT="\033[48;5;253m"
+BG_DARK="\033[48;5;236m"
 
 # 1. MODIFICADORES EN LÍNEA
 # Estilos Tipográficos (Componibles).
@@ -471,14 +482,14 @@ border_dark_subtle()      { printf "\033[38;5;245m%s${RC}" "$1"; }   # Dark bord
 
 # Paleta completa extendida (Estilo Bootstrap: blue, indigo, purple, pink, red, orange, yellow, green, teal, cyan, white, gray)
 text_blue()      { printf "${FG_BLUE}%s${RC}" "$1"; }
-text_indigo()    { printf "\033[38;5;99m%s\033[39m" "$1"; }
+text_indigo()    { printf "${FG_INDIGO}%s${RC}" "$1"; }
 text_purple()    { printf "${FG_MAGENTA}%s${RC}" "$1"; }
-text_pink()      { printf "\033[38;5;162m%s\033[39m" "$1"; }
+text_pink()      { printf "${FG_PINK}%s${RC}" "$1"; }
 text_red()       { printf "${FG_RED}%s${RC}" "$1"; }
-text_orange()    { printf "\033[38;5;208m%s\033[39m" "$1"; }
+text_orange()    { printf "${FG_ORANGE}%s${RC}" "$1"; }
 text_yellow()    { printf "${FG_YELLOW}%s${RC}" "$1"; }
 text_green()     { printf "${FG_GREEN}%s${RC}" "$1"; }
-text_teal()      { printf "\033[38;5;43m%s\033[39m" "$1"; }
+text_teal()      { printf "${FG_TEAL}%s${RC}" "$1"; }
 text_cyan()      { printf "${FG_CYAN}%s${RC}" "$1"; }
 text_white()     { printf "${FG_WHITE}%s${RC}" "$1"; }
 text_gray()      { printf "${FG_GRAY}%s${RC}" "$1"; }    # Texto tenue
@@ -490,20 +501,20 @@ bg_success()   { printf "${BG_GREEN}%s${RC}" "$1"; }
 bg_danger()    { printf "${BG_RED}%s${RC}" "$1"; }
 bg_warning()   { printf "${BG_YELLOW}%s${RC}" "$1"; }
 bg_info()      { printf "${BG_CYAN}%s${RC}" "$1"; }
-bg_light()     { printf "\033[48;5;253m%s\033[49m" "$1"; }
-bg_dark()      { printf "\033[48;5;236m%s\033[49m" "$1"; }
+bg_light()     { printf "${BG_LIGHT}%s${RC}" "$1"; }
+bg_dark()      { printf "${BG_DARK}%s${RC}" "$1"; }
 
 # Fondos de la paleta extendida
 bg_black()     { printf "${BG_BLACK}%s${RC}" "$1"; }
 bg_blue()      { printf "${BG_BLUE}%s${RC}" "$1"; }
-bg_indigo()    { printf "\033[48;5;99m%s\033[49m" "$1"; }
+bg_indigo()    { printf "${BG_INDIGO}%s${RC}" "$1"; }
 bg_purple()    { printf "${BG_MAGENTA}%s${RC}" "$1"; }
-bg_pink()      { printf "\033[48;5;162m%s\033[49m" "$1"; }
+bg_pink()      { printf "${BG_PINK}%s${RC}" "$1"; }
 bg_red()       { printf "${BG_RED}%s${RC}" "$1"; }
-bg_orange()    { printf "\033[48;5;208m%s\033[49m" "$1"; }
+bg_orange()    { printf "${BG_ORANGE}%s${RC}" "$1"; }
 bg_yellow()    { printf "${BG_YELLOW}%s${RC}" "$1"; }
 bg_green()     { printf "${BG_GREEN}%s${RC}" "$1"; }
-bg_teal()      { printf "\033[48;5;43m%s\033[49m" "$1"; }
+bg_teal()      { printf "${BG_TEAL}%s${RC}" "$1"; }
 bg_cyan()      { printf "${BG_CYAN}%s${RC}" "$1"; }
 bg_white()     { printf "${BG_WHITE}%s${RC}" "$1"; }
 bg_gray()      { printf "${BG_GRAY}%s${RC}" "$1"; }
