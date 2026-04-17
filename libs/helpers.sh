@@ -383,7 +383,11 @@ text_body_tertiary()  { printf "\033[38;5;243m%s\033[39m" "$1"; }  # Body text t
 
 # Bootstrap 5.3 Basic colors
 text_black() { printf "${FG_BLACK}%s${RC}" "$1"; }   # Pure black
+# shellcheck disable=SC2329
 text_white() { printf "${FG_WHITE}%s${RC}" "$1"; }  # Pure white
+
+# Export text_white for external use (used in some contexts)
+export -f text_white
 
 # Bootstrap 5.3 Emphasis colors (lighter variants)
 text_primary_emphasis()   { printf "\033[38;5;111m%s\033[39m" "$1"; }  # Light blue
@@ -507,14 +511,14 @@ bg_dark()      { printf "${BG_DARK}%s${RC}" "$1"; }
 # Extended palette backgrounds
 bg_black()     { printf "${BG_BLACK}%s${RC}" "$1"; }
 bg_blue()      { printf "${BG_BLUE}%s${RC}" "$1"; }
-bg_indigo()    { printf "\033[48;5;99m%s\033[49m" "$1"; }
+bg_indigo()    { printf "${BG_INDIGO}%s${RC}" "$1"; }
 bg_purple()    { printf "${BG_MAGENTA}%s${RC}" "$1"; }
-bg_pink()      { printf "\033[48;5;162m%s\033[49m" "$1"; }
+bg_pink()      { printf "${BG_PINK}%s${RC}" "$1"; }
 bg_red()       { printf "${BG_RED}%s${RC}" "$1"; }
-bg_orange()    { printf "\033[48;5;208m%s\033[49m" "$1"; }
+bg_orange()    { printf "${BG_ORANGE}%s${RC}" "$1"; }
 bg_yellow()    { printf "${BG_YELLOW}%s${RC}" "$1"; }
 bg_green()     { printf "${BG_GREEN}%s${RC}" "$1"; }
-bg_teal()      { printf "\033[48;5;43m%s\033[49m" "$1"; }
+bg_teal()      { printf "${BG_TEAL}%s${RC}" "$1"; }
 bg_cyan()      { printf "${BG_CYAN}%s${RC}" "$1"; }
 bg_white()     { printf "${BG_WHITE}%s${RC}" "$1"; }
 bg_gray()      { printf "${BG_GRAY}%s${RC}" "$1"; }
@@ -726,40 +730,47 @@ toUsage() {
 	declare -a key_array value_array default_array description_array lines
   while IFS= read -r line; do
 	lines+=("$line")
-    key_array+=($(echo "$line" | cut -d';' -f1 | wc -c))
-    value_array+=($(echo "$line" | cut -d';' -f2 | wc -c))
-    default_array+=($(echo "$line" | cut -d';' -f3 | wc -c))
-    description_array+=($(echo "$line" | cut -d';' -f4 | wc -c))
+    local key_length value_length default_length description_length
+    key_length=$(echo "$line" | cut -d';' -f1 | wc -c)
+    value_length=$(echo "$line" | cut -d';' -f2 | wc -c)
+    default_length=$(echo "$line" | cut -d';' -f3 | wc -c)
+    description_length=$(echo "$line" | cut -d';' -f4 | wc -c)
+    key_array+=("$key_length")
+    value_array+=("$value_length")
+    default_array+=("$default_length")
+    description_array+=("$description_length")
     
   done
 
   # Get the maximums
-  local max_key=$(max_length "${key_array[@]}")
-  local max_value=$(max_length "${value_array[@]}")
-  local max_default=$(max_length "${default_array[@]}")
-  local max_description=$(max_length "${description_array[@]}")
+  local max_key max_value max_default max_description
+  max_key=$(max_length "${key_array[@]}")
+  max_value=$(max_length "${value_array[@]}")
+  max_default=$(max_length "${default_array[@]}")
+  max_description=$(max_length "${description_array[@]}")
   
   # Print the table
 
   for line in "${lines[@]}"; do
-	local key="$(echo "$line" | cut -d';' -f1)"
-	local value="$(echo "$line" | cut -d';' -f2)"
-	local default="$(echo "$line" | cut -d';' -f3)"
-	local description="$(echo "$line" | cut -d';' -f4)"
+	local key value default description
+	key=$(echo "$line" | cut -d';' -f1)
+	value=$(echo "$line" | cut -d';' -f2)
+	default=$(echo "$line" | cut -d';' -f3)
+	description=$(echo "$line" | cut -d';' -f4)
 	
 	# First line: key, value, default
 	printf "%*s" "$1" ""
     printf "${FG_GREEN}%-${max_key}s${RC}" "$key"
     printf "  ${FG_YELLOW}%-${max_value}s${RC}" "$value"    
     if [ -n "$default" ]; then
-		printf "  ${FG_CYAN}%s${RC}" "$default"
+		printf "  ${FG_CYAN}%-${max_default}s${RC}" "$default"
 	fi
 	echo
 	
 	# Second line: description with extra indentation if exists
 	if [ -n "$description" ]; then
 		printf "%*s" "$(( $1 + max_key + 4 ))" ""
-		printf "${FG_WHITE}%s${RC}\n" "$description"
+		printf "${FG_WHITE}%-${max_description}s${RC}\n" "$description"
 	fi
   done
   
@@ -890,6 +901,6 @@ function sanitize() {
 # URL encode strings (requires jq)
 # Usage: urlencode "Hello World!" -> "Hello%20World%21"
 function urlencode() {
-  local string="$@"
+  local string="$*"
   jq -nr --arg str "$string" '$str|@uri'
 }
