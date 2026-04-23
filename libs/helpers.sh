@@ -113,11 +113,13 @@ function echoc() {
 
 function is_quiet() { [[ "${QUIET:-}" == "true" || "${QUIET:-}" == "1" ]]; }
 
-function info()    { get_log_level "INFO" && printf "%s %s\n" "$(text_info      "$(fw_bold "[ INFO  ]")")" "$*" >&2;}
-function debug()   { get_log_level "DEBUG" && printf "%s %s\n" "$(text_secondary "$(fw_bold "[ DEBUG ]")")" "$*" >&2;}
-function error()   { get_log_level "ERROR" && printf "%s %s\n" "$(text_danger    "$(fw_bold "[ ERROR ]")")" "$*" >&2;}
-function success() { get_log_level "INFO" && printf "%s %s\n" "$(text_success   "$(fw_bold "[SUCCESS]")")" "$*" >&2;}
-function warning() { get_log_level "WARN" && printf "%s %s\n" "$(text_warning   "$(fw_bold "[WARNING]")")" "$*" >&2;}
+# Always return 0 so callers with set -e are not aborted when the message is below HELPER_LOG_LEVEL.
+function info()    { get_log_level "INFO" && printf "%s %s\n" "$(text_info      "$(fw_bold "[ INFO  ]")")" "$*" >&2; return 0;}
+function debug()   { get_log_level "DEBUG" && printf "%s %s\n" "$(text_secondary "$(fw_bold "[ DEBUG ]")")" "$*" >&2; return 0;}
+function error()   { get_log_level "ERROR" && printf "%s %s\n" "$(text_danger    "$(fw_bold "[ ERROR ]")")" "$*" >&2; return 0;}
+function success() { get_log_level "INFO" && printf "%s %s\n" "$(text_success   "$(fw_bold "[SUCCESS]")")" "$*" >&2; return 0;}
+function warning() { get_log_level "WARN" && printf "%s %s\n" "$(text_warning   "$(fw_bold "[WARNING]")")" "$*" >&2; return 0;}
+
 function warn() { warning "$@"; }
 
 function has_tty_available() {
